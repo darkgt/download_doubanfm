@@ -2,12 +2,16 @@
  
 import urllib, urllib2, cookielib, re, json, eyeD3, os
 
-songs_dir = 'songs'
+songs_base_dir = 'songs'
 base_url = 'http://douban.fm/j/mine/playlist?type=n&sid=&pt=0.0&channel=0&from=mainsite'
 invalid = ['/', '\\', ':', '*', '?', '"', '<', '>', '|']
+invalid_folder = ['/', '\\', ':', '*', '?', '"', '<', '>', '|', '.']
 
 def valid_filename(s):
     return filter(lambda x:x not in invalid, s)
+
+def valid_foldername(s):
+    return filter(lambda x:x not in invalid_folder, s)
 
 def get_songs_information(sid, ssid):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
@@ -21,6 +25,8 @@ def get_songs_information(sid, ssid):
     return ret['song']
 
 def download(song):
+    songs_dir = os.path.join(songs_base_dir, valid_foldername(song['albumtitle']))
+    print songs_dir
     try:
         os.mkdir(songs_dir)
     except:
@@ -43,13 +49,15 @@ def download(song):
     tag.setDate(song['public_time'])
     tag.addImage(3, picpath)
     os.remove(picpath)
-    tag.update()	
+    tag.update()
 
-def handle(sid, ssid):
+def handle(sid, ssid, album_name, picurl):
     try:
         songs = get_songs_information(sid, ssid)
         for song in songs:
             if sid == song['sid']:
+                song['albumtitle'] = album_name
+                song['picture'] = picurl
                 download(song)
                 return True
     except:

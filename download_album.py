@@ -1,7 +1,7 @@
 # coding: utf-8
  
 from BeautifulSoup import BeautifulSoup
-import urllib, urllib2, cookielib, re, json, eyeD3, os
+import urllib, urllib2, cookielib, re, json, eyeD3, os, copy
 
 import download
 
@@ -17,18 +17,24 @@ def get_ssids(album):
     ret = {}
     for li in soup.findAll('li', {'class' : 'song-item'}):
         ret[li['id']] = li['data-ssid']
-    return ret
+    album_name = copy.copy(soup.find('h1').find('span').contents[0].decode('gb2312'))
+    picurl = copy.copy(soup.find('a', {'class' : 'nbg'})['href'].decode('gb2312'))
+    return ret, album_name, picurl
 
-def get_ssid(album, sid):
-    return get_ssids(album)[sid]
+#def get_ssid(album, sid):
+#    return get_ssids(album)[sid]
  
-def main():
-    album = raw_input('album:')
-    ssids = get_ssids(album)
+def main(album):
+    #album = raw_input('album:')
+    ssids, album_name, picurl = get_ssids(album)
     print 'all', len(ssids), 'songs'
     for sid, ssid in ssids.iteritems():
-        ret = download.handle(sid, ssid)
+        ret = download.handle(sid, ssid, album_name, picurl)
         print ret
  
 if __name__ == '__main__':
-    main()
+    #main()
+    doc = 'album.txt'
+    con = open(doc, 'r').readlines()
+    for url in con:
+        main(url[23:])
