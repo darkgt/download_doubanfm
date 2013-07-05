@@ -21,9 +21,6 @@ def get_ssids(album):
     picurl = copy.copy(soup.find('a', {'class' : 'nbg'})['href'].decode('gb2312'))
     return ret, album_name, picurl
 
-#def get_ssid(album, sid):
-#    return get_ssids(album)[sid]
- 
 def main(album):
     #album = raw_input('album:')
     ssids, album_name, picurl = get_ssids(album)
