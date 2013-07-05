@@ -47,17 +47,19 @@ def download(song):
     tag.setAlbum(song['albumtitle'])
     tag.setArtist(song['artist'])
     tag.setDate(song['public_time'])
+    tag.setTrackNum(song['tracknum'])
     tag.addImage(3, picpath)
     os.remove(picpath)
     tag.update()
 
-def handle(sid, ssid, album_name, picurl):
+def handle(sid, ssid, album_name, picurl, tracknum):
     try:
         songs = get_songs_information(sid, ssid)
         for song in songs:
             if sid == song['sid']:
                 song['albumtitle'] = album_name
                 song['picture'] = picurl
+                song['tracknum'] = tracknum
                 download(song)
                 return True
     except:

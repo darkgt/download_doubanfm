@@ -25,8 +25,8 @@ def main(album):
     #album = raw_input('album:')
     ssids, album_name, picurl = get_ssids(album)
     print 'all', len(ssids), 'songs'
-    for sid, ssid in ssids.iteritems():
-        ret = download.handle(sid, ssid, album_name, picurl)
+    for idx, (sid, ssid) in enumerate(ssids.iteritems()):
+        ret = download.handle(sid, ssid, album_name, picurl, (idx + 1, len(ssids)))
         print ret
  
 if __name__ == '__main__':
